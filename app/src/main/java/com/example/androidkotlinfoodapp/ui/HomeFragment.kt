@@ -6,8 +6,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.androidkotlinfoodapp.R
+import com.example.androidkotlinfoodapp.adapter.AdapterCategory
 import com.example.androidkotlinfoodapp.databinding.FragmentHomeBinding
+import com.example.androidkotlinfoodapp.model.Reslut
 import com.example.androidkotlinfoodapp.viewmodel.HomeViewModel
 
 // TODO: Rename parameter arguments, choose names that match
@@ -23,6 +26,7 @@ private const val ARG_PARAM2 = "param2"
 class HomeFragment : Fragment() {
     private lateinit var binding:FragmentHomeBinding
     private lateinit var viewModel:HomeViewModel //kiểu khai báo gán giá trị
+    private lateinit var adapterCate : AdapterCategory
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,15 +47,22 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initView()
         viewModel.getCategory()
         obseverLiveData()
     }
 
+    private fun initView() {
+        adapterCate = AdapterCategory()
+        binding.rcvFood.apply {
+            layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+            adapter = adapterCate
+        }
+    }
+
     private fun obseverLiveData() {
         viewModel.obseverCategoryLiveData().observe(viewLifecycleOwner,{reslut->
-            reslut.forEach{
-                item -> Log.d("logg", item.category)
-            }
+           adapterCate.setDataCate(reslut as ArrayList<Reslut>)
         })
     }
 
